@@ -12,14 +12,25 @@ export default class extends React.Component {
     this.handleAnimationReady = this.handleAnimationReady.bind(this)
     this.handleResize = this.handleResize.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
+    this.handleTouchEnd = this.handleTouchEnd.bind(this)
   }
   componentDidMount() {
-    document.body.scrollTop = 0
-    document.body.addEventListener('scroll', this.handleScroll)
+    if (typeof window.pageYOffset !== 'undefined') window.scrollTo(0, scrollTo)
+    else document.body.scrollTop = 0
+
+    if ('ontouchstart' in window) {
+      document.body.addEventListener('touchmove', this.handleScroll)
+      document.body.addEventListener('touchend', this.handleTouchEnd)
+    } else {
+      document.body.addEventListener('scroll', this.handleScroll)
+    }
+    
     window.addEventListener('resize', this.handleResize)
   }
   componentWillUnmount() {
-    document.body.removeEventListener('scroll', this.handleScroll)
+    if ('ontouchstart' in window) {
+      document.body.removeEventListener('touchmove', this.handleScroll)
+    } else document.body.removeEventListener('scroll', this.handleScroll)
     window.removeEventListener('resize', this.handleResize)
   }
   handleAnimationReady() {
@@ -35,15 +46,17 @@ export default class extends React.Component {
         height: typeof window === 'undefined' ? 0 : window.innerHeight
       })
     }, 150)
+    this.handleScroll({ target: { scrollTop: 0 }})
   }
   handleScroll(ev) {
     if (this.state.ready) {
-      let ratio = ev.target.scrollTop / this.state.height
+      let scrollTop = Math.max(ev.target.scrollTop, document.body.firstChild.getBoundingClientRect().top * -1)
+      let ratio = scrollTop / this.state.height
       let opacity = ratio >= 0.5 ? 0 : 1 - 2 * ratio
       this.setState({
         opacity,
         ready: false,
-        top: ev.target.scrollTop / 8 * -1
+        top: scrollTop / 8 * -1
       })
       this.animationTimer = setTimeout(() => {
         this.handleAnimationReady()
@@ -51,6 +64,14 @@ export default class extends React.Component {
     } else {
       requestAnimationFrame(this.handleAnimationReady)
     }
+  }
+  handleTouchEnd() {
+    this.touchEndIntervals = 0
+    this.touchEndInterval = setInterval(() => {
+      this.handleScroll({ target: { scrollTop: 0 }})
+      if (this.touchEndInterval >= 45) clearInterval(this.touchEndInterval)
+      this.touchEndIntervals += 1
+    }, 50)
   }
   render() {
     return (

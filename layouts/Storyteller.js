@@ -29,6 +29,7 @@ class Storyteller extends Component {
             height: 100vh;
           }
           body {
+            -webkit-overflow-scrolling: touch;
             height: 100vh;
             overflow: auto;
           }
