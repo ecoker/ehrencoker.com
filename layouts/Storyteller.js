@@ -37,7 +37,7 @@ class Storyteller extends Component {
           body {
             -webkit-font-smoothing: antialiased;
             background-color: ${Colors.white};
-            font-family: Argent;
+            font-family: Argent, Georgia, Times, serif;
             font-size: 16px;
             margin: 0;
             padding: 0;
