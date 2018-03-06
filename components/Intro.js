@@ -82,6 +82,7 @@ export default class extends React.Component {
         <style jsx>{`
           .intro {
             height: 100vh;
+            pointer-events: none;
           }
           h1 {
             font-size: 8vw;
