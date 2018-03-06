@@ -1,10 +1,12 @@
-## Personal Site
-Run locally:
+Code is Beautiful
+=================
+
+### Run locally:
 ```
 npm run dev
 ```
 
-Create static assets:
+### Create static assets:
 ```
 npm run export
 ```
