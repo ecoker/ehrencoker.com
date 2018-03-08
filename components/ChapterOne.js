@@ -21,6 +21,7 @@ class ChapterOne extends Component {
             flex-flow: column;
             margin: 0 auto;
             max-width: 50rem;
+            padding: 2rem 0;
             width: 80vw;
           }
           h4 {
