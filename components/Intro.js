@@ -10,43 +10,30 @@ export default class extends React.Component {
       top: 0
     }
     this.handleAnimationReady = this.handleAnimationReady.bind(this)
-    this.handleResize = this.handleResize.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.handleTouchEnd = this.handleTouchEnd.bind(this)
   }
   componentDidMount() {
-    if (typeof window.pageYOffset !== 'undefined') window.scrollTo(0, scrollTo)
-    else document.body.scrollTop = 0
-
     if ('ontouchstart' in window) {
       document.body.addEventListener('touchmove', this.handleScroll)
       document.body.addEventListener('touchend', this.handleTouchEnd)
     } else {
       document.body.addEventListener('scroll', this.handleScroll)
     }
-    
-    window.addEventListener('resize', this.handleResize)
   }
   componentWillUnmount() {
     if ('ontouchstart' in window) {
+      document.body.removeEventListener('touchend', this.handleScroll)
       document.body.removeEventListener('touchmove', this.handleScroll)
-    } else document.body.removeEventListener('scroll', this.handleScroll)
-    window.removeEventListener('resize', this.handleResize)
+    } else {
+      document.body.removeEventListener('scroll', this.handleScroll)
+    }
   }
   handleAnimationReady() {
     clearTimeout(this.animationTimer)
     this.setState({
       ready: true
     })
-  }
-  handleResize(ev) {
-    clearTimeout(this.resizeTimer)
-    this.resizeTimer = setTimeout(() => {
-      this.setState({
-        height: typeof window === 'undefined' ? 0 : window.innerHeight
-      })
-    }, 150)
-    this.handleScroll({ target: { scrollTop: 0 }})
   }
   handleScroll(ev) {
     if (this.state.ready) {
@@ -81,7 +68,6 @@ export default class extends React.Component {
         </h1>
         <style jsx>{`
           .intro {
-            height: 100vh;
             pointer-events: none;
           }
           h1 {
