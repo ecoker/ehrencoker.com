@@ -6,7 +6,7 @@ import * as Colors from '../services/colors'
 class Storyteller extends Component {
   render() {
     return (
-      <div className='story-teller'>
+      <div id='story-teller' className='story-teller'>
         { this.props.children }
         <style jsx global>{`
           @font-face {

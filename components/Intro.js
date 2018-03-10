@@ -12,19 +12,20 @@ export default class extends React.Component {
     this.handleAnimationReady = this.handleAnimationReady.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.handleTouchEnd = this.handleTouchEnd.bind(this)
+    this.stopTouchInterval = this.stopTouchInterval.bind(this)
   }
   componentDidMount() {
     if ('ontouchstart' in window) {
-      document.body.addEventListener('touchmove', this.handleScroll)
-      document.body.addEventListener('touchend', this.handleTouchEnd)
+      document.getElementById('story-teller').addEventListener('touchmove', this.handleScroll)
+      document.getElementById('story-teller').addEventListener('touchend', this.handleTouchEnd)
     } else {
       document.body.addEventListener('scroll', this.handleScroll)
     }
   }
   componentWillUnmount() {
     if ('ontouchstart' in window) {
-      document.body.removeEventListener('touchend', this.handleScroll)
-      document.body.removeEventListener('touchmove', this.handleScroll)
+      document.getElementById('story-teller').removeEventListener('touchend', this.handleScroll)
+      document.getElementById('story-teller').removeEventListener('touchmove', this.handleScroll)
     } else {
       document.body.removeEventListener('scroll', this.handleScroll)
     }
@@ -36,7 +37,6 @@ export default class extends React.Component {
     })
   }
   handleScroll(ev) {
-    clearInterval(this.touchEndInterval)
     if (this.state.ready) {
       let scrollTop = Math.max(ev.target.scrollTop, document.body.firstChild.getBoundingClientRect().top * -1)
       let ratio = scrollTop / this.state.height
@@ -53,13 +53,26 @@ export default class extends React.Component {
       requestAnimationFrame(this.handleAnimationReady)
     }
   }
+  stopTouchInterval() {
+    this.setState({
+      touchEndIntervalRunning: false
+    }, () => {
+      clearInterval(this.touchEndInterval)
+    })
+  }
   handleTouchEnd() {
     this.touchEndIntervals = 0
-    this.touchEndInterval = setInterval(() => {
-      this.handleScroll({ target: { scrollTop: 0 } })
-      if (this.touchEndInterval >= 45) clearInterval(this.touchEndInterval)
-      this.touchEndIntervals += 1
-    }, 50)
+    if (!this.state.touchEndIntervalRunning) {
+      this.setState({
+        touchEndIntervalRunning: true
+      }, () => {
+        this.touchEndInterval = setInterval(() => {
+          this.handleScroll({ target: { scrollTop: 0 }})
+          if (this.touchEndInterval >= 120) this.stopTouchInterval()
+          this.touchEndIntervals += 1
+        }, 25)
+      })
+    }
   }
   render() {
     return (
