@@ -36,6 +36,7 @@ export default class extends React.Component {
     })
   }
   handleScroll(ev) {
+    clearInterval(this.touchEndInterval)
     if (this.state.ready) {
       let scrollTop = Math.max(ev.target.scrollTop, document.body.firstChild.getBoundingClientRect().top * -1)
       let ratio = scrollTop / this.state.height
@@ -55,7 +56,7 @@ export default class extends React.Component {
   handleTouchEnd() {
     this.touchEndIntervals = 0
     this.touchEndInterval = setInterval(() => {
-      this.handleScroll({ target: { scrollTop: 0 }})
+      this.handleScroll({ target: { scrollTop: 0 } })
       if (this.touchEndInterval >= 45) clearInterval(this.touchEndInterval)
       this.touchEndIntervals += 1
     }, 50)

@@ -33,6 +33,10 @@ class Storyteller extends Component {
             max-height: 100vh;
             overflow: auto;
           }
+          ::selection {
+            background: ${Colors.red};
+            color: ${Colors.white};
+          }
           html,
           body {
             -webkit-font-smoothing: antialiased;
